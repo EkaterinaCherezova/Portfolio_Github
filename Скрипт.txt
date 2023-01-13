@@ -1,0 +1,55 @@
+Скрипт соединение.
+SELECT * FROM executor ex
+JOIN employees em ON em.id = ex.tab_no
+JOIN contract co ON co.id = ex.contract_id
+JOIN department d ON d.id = em.department_id
+JOIN customer cu ON cu.id = co.customer_id
+
+1.	Найти информацию о всех контрактах, связанных с сотрудниками департамента «Logistic». Вывести: contract_id, employee_name
+
+SELECT co.id, d.name, em.name FROM executor ex
+JOIN employees em ON em.id = ex.tab_no
+JOIN contract co ON co.id = ex.contract_id
+JOIN department d ON d.id = em.department_id
+JOIN customer cu ON cu.id = co.customer_id
+WHERE d.name='Logistic'
+
+2.	Найти среднюю стоимость контрактов, заключенных сотрудником Ivan Ivanov. Вывести: среднее значение amount
+
+SELECT AVG(co.amount) FROM contract co
+JOIN executor ex ON co.id = ex.tab_no
+JOIN employees em ON ex.tab_no = em.id
+WHERE em.name = 'Ivan Ivanov'
+
+3.	Найти самую часто встречающуюся локацию среди всех заказчиков. Вывести:location, count
+
+SELECT location, COUNT(location) FROM customer cu
+GROUP BY cu.location
+ORDER BY COUNT(location)
+DESC
+LIMIT 1
+
+4.	Найти контракты одинаковой стоимости. Вывести count, amount
+
+SELECT co.amount, COUNT(co.amount) FROM contract co
+GROUP BY co.amount
+HAVING COUNT(co.amount) > 1
+
+5.	Найти заказчика с наименьшей средней стоимостью контрактов. Вывести customer_name, среднее значение amount
+
+SELECT cu.customer_name, AVG(co.amount) FROM contract co
+INNER JOIN customer cu ON co.customer_id = cu.id
+GROUP BY cu.customer_name
+ORDER BY AVG(co.amount)
+ASC
+LIMIT 1
+
+6. Найти отдел, заключивший контрактов на наибольшую сумму. Вывести: department_name, sum
+SELECT d.name, SUM(co.amount) FROM executor ex
+JOIN employees em ON em.id = ex.tab_no
+JOIN contract co ON co.id = ex.contract_id
+JOIN department d ON d.id = em.department_id
+GROUP BY d.name
+ORDER BY SUM(co.amount)
+DESC
+LIMIT 1
